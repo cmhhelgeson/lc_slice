@@ -78,6 +78,7 @@ function App() {
     [
       "62. Unique Paths",
       "63. Unique Paths II",
+      "74. Search a 2D Matrix",
       "417. Pacific Atlantic Waterflow", 
       "733. Flood Fill", 
       "934. Shortest Bridge",

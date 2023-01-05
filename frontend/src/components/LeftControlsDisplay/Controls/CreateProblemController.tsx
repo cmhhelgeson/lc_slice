@@ -5,6 +5,7 @@ import { QUESTIONS_ENUM } from "../../../utils/questionEnum"
 import { ShortestBridgeController } from "../Controllers/GridControllers/ShortestBridgeController"
 import { UniquePathsOne } from "../Controllers/GridControllers/UniquePaths/UniquePathsOne"
 import { UniquePathsTwo } from "../Controllers/GridControllers/UniquePaths"
+import { SearchA2DMatrixI } from "../Controllers/GridControllers/SearchA2DMatrix"
 
 type CreateProblemControllerProps = {
     problemNumber: number,
@@ -45,7 +46,13 @@ export const CreateProblemController = ({
     case QUESTIONS_ENUM.SEARCH_A_2D_MATRIX: {
       //TODO: 
       return (
-        <h1>Invalid problem selected!</h1>
+        <SearchA2DMatrixI 
+          animationOn={animationOn}
+          play={play}
+          pause={pause}
+          animationSpeed={animationSpeed}
+          problemNumber={QUESTIONS_ENUM.SEARCH_A_2D_MATRIX}
+        />
       )
     }
     case QUESTIONS_ENUM.SEARCH_A_2D_MATRIX_II: {

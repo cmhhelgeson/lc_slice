@@ -97,7 +97,7 @@ export const LengthEdgeCaseLog = (
 ): JSX.Element => {
   return (
     <div>
-      Due to the grid's size, the shortest possible bridge must be of length 1.
+      Due to the grid's size, the only possible answer is a length of 1 or a direct path.
     </div>
   )
 }
