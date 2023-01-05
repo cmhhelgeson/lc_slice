@@ -14,10 +14,9 @@ const TEMPLATE_SearchA2DMatrixI = ({
   /* Client State Variables */
   const [complete, setComplete] = useState<boolean>(false);
   const [start, setStart] = useState<boolean>(false);
-  const [target, setTarget] = useState<number>(34);
+  const [target, setTarget] = useState<number>(144);
   const [iteration, setIteration] = useState<number>(0);
   const [targetRow, setTargetRow] = useState<number>(-1);
-
 
   const clickSetUp = async () => {
     setup();
@@ -26,7 +25,6 @@ const TEMPLATE_SearchA2DMatrixI = ({
     setStart(false);
     setComplete(false);
   }
-
 
   const getRowPointers = (
     targetRow: number, 
@@ -41,7 +39,9 @@ const TEMPLATE_SearchA2DMatrixI = ({
     targetRow: number,
     iteration: number,
   ) => {
-    //Clear previous
+    const leftCol = 0 + iteration;
+    const rightCol = grid[0].length - 1 - iteration;
+    console.log(`Setting columns ${leftCol} & ${rightCol} to Unexplored`)
     dispatch(changeGridCellStatus({
       gridIndex: 0,
       row: targetRow, 
@@ -59,13 +59,13 @@ const TEMPLATE_SearchA2DMatrixI = ({
       gridIndex: 0,
       row: targetRow, 
       col: 0 + iteration + 1, 
-      status: "UNEXPLORED"
+      status: "CURRENT"
     }))
     dispatch(changeGridCellStatus({
       gridIndex: 0,
       row: targetRow,
       col: grid[0].length - 1 - (iteration + 1),
-      status: "UNEXPLORED"
+      status: "CURRENT"
     }))
 
 
@@ -98,13 +98,26 @@ const TEMPLATE_SearchA2DMatrixI = ({
         status: "UNEXPLORED"   
       }));
       if (grid[iteration][0].data > target) {
+        dispatch(changeGridCellStatus({
+          gridIndex: 0,
+          row: iteration - 1, 
+          col: 0, 
+          status: "CURRENT"
+        }))
+        dispatch(changeGridCellStatus({
+          gridIndex: 0, 
+          row: iteration - 1, 
+          col: grid[0].length - 1,
+          status: "CURRENT"
+        }))
         setTargetRow(iteration - 1);
         setIteration(0);
         return;
       }
 
       if (grid[iteration][0].data === target) {
-        //Do something
+        setComplete(true);
+        console.log("complete")
       }
 
       if (iteration === grid.length - 1) {
@@ -125,6 +138,7 @@ const TEMPLATE_SearchA2DMatrixI = ({
         }))
         return;
       }
+
       dispatch(changeGridCellStatus({
         gridIndex: 0,
         row: iteration + 1,
@@ -137,6 +151,7 @@ const TEMPLATE_SearchA2DMatrixI = ({
 
     const [firstPointer, secondPointer] = getRowPointers(targetRow, iteration)
     if (firstPointer === target || secondPointer === target) {
+      applyNextPointers(targetRow, iteration);
       setComplete(true);
     }
     applyNextPointers(targetRow, iteration);
