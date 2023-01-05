@@ -1,106 +1,154 @@
 import React, {useState, useEffect} from "react"
-import { ControllerProps } from "../../controllerUtils";
 import { useAppDispatch, useAppSelector } from "../../../../../features/hooks";
-import { clearState } from "../../../../../utils/clearState";
 import { QUESTIONS_ENUM } from "../../../../../utils/questionEnum";
-import { Exact, GetGridFromProblemExampleQuery, GridInterpreter, InputMaybe, useGetGridFromProblemExampleLazyQuery } from "../../../../../__generated__/resolvers-types";
-import { handleServerGrid } from "../gridControllerUtils";
 import { changeGridCellStatus } from "../../../../../features/grids/gridsSlice";
 import { BasicController } from "../../BasicController";
-import { ComponentType } from "react";
-import { QueryResult } from "@apollo/client";
-import { Cell } from "../../../../../utils/types";
-
-
-type Base = {
-  animationOn: boolean,
-  play: () => void,
-  pause: () => void,
-  animationSpeed: number,
-  problemNumber: number, 
-}
-
-type WithBasicGridClientInjectedProps = {
-  animationOn: boolean,
-  play: () => void,
-  pause: () => void,
-  animationSpeed: number,
-  problemNumber: number,
-  gridClient: QueryResult<GetGridFromProblemExampleQuery, Exact<{
-    number?: InputMaybe<number> | undefined;
-    example?: InputMaybe<number> | undefined;
-  }>>
-  setup: () => Promise<void>
-}
-
-type WithBasicGridClientProviderProps = {
-  animationOn: boolean,
-  play: () => void,
-  pause: () => void,
-  animationSpeed: number,
-  problemNumber: number,
-}
-
-const withBasicGridDispatch = (
-  WrappedComponent: ComponentType<WithBasicGridClientInjectedProps>
-) => {
-  return (props: WithBasicGridClientProviderProps) => {
-    const dispatch = useAppDispatch();
-    const [getGrid, gridClient] = useGetGridFromProblemExampleLazyQuery(); 
-    const [example, setExample] = useState<number>(0);
-
-    const clickSetUp = async () => {
-      clearState(dispatch, props.problemNumber);
-      await getGrid({
-        variables: {
-          number: props.problemNumber,
-          example: 0,
-        }
-      })
-      setExample(example + 1);
-    }
-    return <WrappedComponent {...props} 
-      setup={clickSetUp} 
-      gridClient={gridClient}
-    />
-  } 
-}
+import {WithBasicGridClientInjectedProps, withBasicGridClient } from "../withBasicGridClient"
 
 const TEMPLATE_SearchA2DMatrixI = ({
   animationOn, play, pause, animationSpeed,
   problemNumber, gridClient, setup
 }: WithBasicGridClientInjectedProps) => {
   const dispatch = useAppDispatch();
-  const grid = useAppSelector(state => state.grids[0] ? state.grids[0].cells : [])
+  const grid = useAppSelector(state => state.grids[0] ? state.grids[0].cells : []);
   /* Client State Variables */
-  const [currentCell, setCurrentCell] = useState<[number, number]>([0, 0]);
   const [complete, setComplete] = useState<boolean>(false);
+  const [start, setStart] = useState<boolean>(false);
+  const [target, setTarget] = useState<number>(34);
+  const [iteration, setIteration] = useState<number>(0);
+  const [targetRow, setTargetRow] = useState<number>(-1);
 
 
   const clickSetUp = async () => {
     setup();
+    setIteration(0);
+    setTargetRow(-1);
+    setStart(false);
+    setComplete(false);
   }
 
-  useEffect(() => {
-    if (gridClient.data && gridClient.data.problem && gridClient.data.problem.grids && gridClient.data.problem.grids[0]) {
-      const {interpretAs, gridData, label} = gridClient.data.problem.grids[0];
-      handleServerGrid(dispatch, gridData as number[][], label as string, interpretAs as GridInterpreter);
-      dispatch(changeGridCellStatus({gridIndex: 0, row: 0, col: 0, status: "CURRENT"}))
-      setCurrentCell([0, 0]);
-      setComplete(false);
-    }
-  }, [gridClient]);
+
+  const getRowPointers = (
+    targetRow: number, 
+    iteration: number
+  ) => {
+    let firstPointer = grid[targetRow][iteration + 1].data;
+    let secondPointer = grid[targetRow][grid[0].length - 1 - iteration].data;
+    return [firstPointer, secondPointer]
+  }
+
+  const applyNextPointers = (
+    targetRow: number,
+    iteration: number,
+  ) => {
+    //Clear previous
+    dispatch(changeGridCellStatus({
+      gridIndex: 0,
+      row: targetRow, 
+      col: 0 + iteration, 
+      status: "UNEXPLORED"
+    }))
+    dispatch(changeGridCellStatus({
+      gridIndex: 0,
+      row: targetRow,
+      col: grid[0].length - 1 - iteration,
+      status: "UNEXPLORED"
+    }))
+    //Apply next
+    dispatch(changeGridCellStatus({
+      gridIndex: 0,
+      row: targetRow, 
+      col: 0 + iteration + 1, 
+      status: "UNEXPLORED"
+    }))
+    dispatch(changeGridCellStatus({
+      gridIndex: 0,
+      row: targetRow,
+      col: grid[0].length - 1 - (iteration + 1),
+      status: "UNEXPLORED"
+    }))
+
+
+  }
 
   const clickStep = () => {
-    console.log("step");
-    console.log(grid);
+    if (complete) {
+      console.log("complete")
+      return;
+    }
+    if (!start) {
+      setStart(true);
+      dispatch(changeGridCellStatus({gridIndex: 0, row: 0, col: 0, status: "CURRENT"}))
+      setComplete(false);
+      return;
+    }
+
+    //Define edge cases
+    if (target < grid[0][0].data || target > grid[grid.length - 1][grid[0].length - 1].data) {
+      setComplete(true);
+      return;
+    }
+
+    //Emulate for loop
+    if (targetRow === -1) {
+      dispatch(changeGridCellStatus({
+        gridIndex: 0,
+        row: iteration,
+        col: 0,
+        status: "UNEXPLORED"   
+      }));
+      if (grid[iteration][0].data > target) {
+        setTargetRow(iteration - 1);
+        setIteration(0);
+        return;
+      }
+
+      if (grid[iteration][0].data === target) {
+        //Do something
+      }
+
+      if (iteration === grid.length - 1) {
+        console.log("s")
+        setTargetRow(iteration)
+        setIteration(0);
+        dispatch(changeGridCellStatus({
+          gridIndex: 0,
+          row: iteration, 
+          col: 0, 
+          status: "CURRENT"
+        }))
+        dispatch(changeGridCellStatus({
+          gridIndex: 0,
+          row: iteration,
+          col: grid[0].length - 1,
+          status: "CURRENT"
+        }))
+        return;
+      }
+      dispatch(changeGridCellStatus({
+        gridIndex: 0,
+        row: iteration + 1,
+        col: 0,
+        status: "CURRENT"
+      }))
+      setIteration(iteration + 1);
+      return;
+    }
+
+    const [firstPointer, secondPointer] = getRowPointers(targetRow, iteration)
+    if (firstPointer === target || secondPointer === target) {
+      setComplete(true);
+    }
+    applyNextPointers(targetRow, iteration);
+    setIteration(iteration + 1);
+
   }
 
   useEffect(() => {
     if (animationOn && problemNumber === QUESTIONS_ENUM.SEARCH_A_2D_MATRIX) {
       setTimeout(() => clickStep(), animationSpeed);
     }
-  }, [currentCell, animationOn]);
+  }, [start, iteration, animationOn]);
 
   return (
     <BasicController
@@ -119,5 +167,5 @@ const TEMPLATE_SearchA2DMatrixI = ({
 }
 
 export const SearchA2DMatrixI = 
-  withBasicGridDispatch(TEMPLATE_SearchA2DMatrixI)
+  withBasicGridClient(TEMPLATE_SearchA2DMatrixI)
 

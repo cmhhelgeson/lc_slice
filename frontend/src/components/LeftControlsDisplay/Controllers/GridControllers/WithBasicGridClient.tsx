@@ -1,11 +1,17 @@
+import React from "react"
 import { QueryResult } from "@apollo/client";
 import { GetGridFromProblemExampleQuery, Exact, InputMaybe} from "../../../../__generated__/resolvers-types";
 import { ComponentType, useState, useEffect} from "react";
 import { useAppDispatch } from "../../../../features/hooks";
 import { useGetProblemNumExamplesLazyQuery, useGetGridFromProblemExampleLazyQuery } from "../../../../__generated__/resolvers-types";
 import { clearState } from "../../../../utils/clearState";
+import { convertArrayToGrid, convertArrayToFalse} from "./gridControllerUtils";
+import { copyGrids } from "../../../../features/grids/gridsSlice";
+import { GridCreationLog } from "./logUtils";
+import { pushJSXToLog } from "../../../../features/problemInfo/problemSlice";
 
-type WithBasicGridClientInjectedProps = {
+
+export type WithBasicGridClientInjectedProps = {
   animationOn: boolean,
   play: () => void,
   pause: () => void,
@@ -18,7 +24,7 @@ type WithBasicGridClientInjectedProps = {
   setup: () => Promise<void>
 }
 
-type WithBasicGridClientProviderProps = {
+export type WithBasicGridClientProviderProps = {
   animationOn: boolean,
   play: () => void,
   pause: () => void,
@@ -35,15 +41,35 @@ export const withBasicGridClient = (
     const [example, setExample] = useState<number>(0);
 
     const clickSetUp = async () => {
+      props.pause();
       clearState(dispatch, props.problemNumber);
       await getGrid({
         variables: {
           number: props.problemNumber,
-          example: 0,
+          example: example,
         }
       })
-      setExample(example + 1);
     }
+
+    useEffect(() => {
+      console.log(gridClient);
+      if (gridClient.data && gridClient.data.problem && gridClient.data.problem.grids && gridClient.data.problem.grids[0]) {
+        const {interpretAs, gridData} = gridClient.data.problem.grids[0];
+        //TODO: This is also bad
+        const grid = convertArrayToGrid(gridData as number[][], interpretAs as "NUMBER" | "BOOLEAN" | "NORMALIZED");
+        dispatch(copyGrids([grid]));
+        setExample((example + 1) % gridClient.data.problem.numExamples);
+        const element = (
+          <GridCreationLog
+            dispatch={dispatch}
+            numStructs={1}
+            labels={["Grid #1"]}
+          />
+        );
+        dispatch(pushJSXToLog({element: element}))
+      }
+    }, [gridClient])
+
     return <WrappedComponent {...props} 
       setup={clickSetUp} 
       gridClient={gridClient}

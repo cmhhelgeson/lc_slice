@@ -1,8 +1,5 @@
 //#region Imports
-import React, {useState, useEffect, useMemo} from "react"
-import {
-     useSelector 
-} from "react-redux";
+import React, {useState, useEffect} from "react"
 import { 
     copyGrids, 
     changeGridCellStatus,
@@ -10,31 +7,27 @@ import {
     changeMultiGridSameCellStatus,
     clearGridCellsStatus,
     changeGridIndividualCellSize
-} from "../../../../features/grids/gridsSlice";
+} from "../../../../../features/grids/gridsSlice";
 import { 
     ARRAY_2D_GET_FOUR_DIRECTIONS_FROM_CELL,
     GRID_CELL_INDEX_HAS_DATA,
     GRID_CELL_INDEX_GET_DATA,
     ARRAY_2D_GET_NEXT_INDEX,
     DirectionString
-} from "../../../../features/grids/gridUtils";
-import { 
-    deleteAllStructs,
-    deleteGrid
-} from "../../../../features/sharedActions";
-import { useAppDispatch, useAppSelector } from "../../../../features/hooks";
-import { convertArrayToFalse, convertArrayToGrid } from "./gridControllerUtils";
-import { CellStatus } from "../../../../utils/types";
-import "../controller.css"
-import { changeProblemNumber, clearLog, pushJSXToLog, selectProblemNumber } from "../../../../features/problemInfo/problemSlice";
-import { BasicController } from "../BasicController";
+} from "../../../../../features/grids/gridUtils";
+import { useAppDispatch, useAppSelector } from "../../../../../features/hooks";
+import { convertArrayToFalse, convertArrayToGrid } from "../gridControllerUtils";
+import { CellStatus } from "../../../../../utils/types";
+import "../../controller.css"
+import { changeProblemNumber, clearLog, pushJSXToLog, selectProblemNumber } from "../../../../../features/problemInfo/problemSlice";
+import { BasicController } from "../../BasicController";
 import {motion} from "framer-motion"
-import { clearState } from "../../../../utils/clearState";
-import { CellHighlighter, TextHighlighter } from "../CellHighlighter";
-import { QUESTIONS_ENUM } from "../../../../utils/questionEnum";
-import { GoBackFromToLog, GridCreationLog } from "./logUtils";
-import { useGetGridFromProblemExampleLazyQuery } from "../../../../__generated__/resolvers-types";
-import { ControllerProps } from "../controllerUtils";
+import { clearState } from "../../../../../utils/clearState";
+import { CellHighlighter, TextHighlighter } from "../../CellHighlighter";
+import { QUESTIONS_ENUM } from "../../../../../utils/questionEnum";
+import { GoBackFromToLog, GridCreationLog } from "../logUtils";
+import { useGetGridFromProblemExampleLazyQuery } from "../../../../../__generated__/resolvers-types";
+import { ControllerProps } from "../../controllerUtils";
 //#endregion
 
 //Equivalent to currentCell

@@ -19,7 +19,6 @@ type NodeProps = {
 
 const onlyNumbers = (str: string) => {
     return /^-?\d*\.{0,1}\d+$/.test(str);
-    //return /^[0-9.,]+$/.test(str);
 }
 
 const onlyBooleans = (str: string) => {
@@ -45,8 +44,6 @@ const parseBoolean = (str: string) => {
 }
 
 const parseCellData = (data: any) => {
-    console.log(data);
-    console.log("parsing cell data");
     if (data === true || data === false) {
         if (data === true) {
             return "true";
@@ -134,15 +131,9 @@ export const Node = ({
     if (rowIdx < 0 || colIdx < 0) {
       console.log("Row or Column is passed in as negative on a node");
     }
-    console.log(rowIdx, colIdx);
     const cellData = useAppSelector(state => state.grids[gridIndex].cells[rowIdx][colIdx] ? 
       state.grids[gridIndex].cells[rowIdx][colIdx].data : 0);
     const cellStatus = useAppSelector(state => state.grids[gridIndex].cells[rowIdx][colIdx].status);
-    /* const cellData = useAppSelector(state => state.grids[gridIndex] ? 
-        state.grids[gridIndex].cells[rowIdx][colIdx].data : 0);
-    const cellStatus = useAppSelector(state => state.grids[gridIndex] ?
-        state.grids[gridIndex].cells[rowIdx][colIdx].status : "UNEXPLORED"
-    ); */
 
     const cellWidth: number | undefined = useAppSelector(state => state.grids[gridIndex].cells[rowIdx][colIdx].width)
     const cellHeight: number | undefined = useAppSelector(state => state.grids[gridIndex].cells[rowIdx][colIdx].height);
