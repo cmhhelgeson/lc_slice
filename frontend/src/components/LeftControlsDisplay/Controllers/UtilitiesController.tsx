@@ -102,24 +102,24 @@ export const UtilitiesController = ({inputGrid, selectedRow, clearValue}: Utilit
     return (
         <div>
             <ControllerButtons 
-                actions={[clickAddGraph]} 
+                buttonActions={[clickAddGraph]} 
                 buttonLabels={["Add Graph"]} 
-                label="Graph Utils"
+                //label="Graph Utils"
             />
             <ControllerButtons 
-                actions={[clickDecreaseRows, clickIncreaseRows, clickDecreaseColumns, clickIncreaseColumns]}
+                buttonActions={[clickDecreaseRows, clickIncreaseRows, clickDecreaseColumns, clickIncreaseColumns]}
                 buttonLabels={["Decrease Rows", "Increase Rows", "Decrease Columns", "Increase Columns"]}
-                label={"Grid Utils"}
+                //label={"Grid Utils"}
             />
             <ControllerButtons
-                actions={[clickClearSelectedGrid, clickClearSelectedRow]}
+                buttonActions={[clickClearSelectedGrid, clickClearSelectedRow]}
                 buttonLabels={["Clear Selected Grid", "Clear Selected Row"]}
-                label={"Clear Grid Utils"}
+                //label={"Clear Grid Utils"}
             />
             <ControllerButtons
-                actions={[clickAddGrid, clickDeleteGrid, clickAddArray, clickDeleteArray]}
+                buttonActions={[clickAddGrid, clickDeleteGrid, clickAddArray, clickDeleteArray]}
                 buttonLabels={["Add Grid", "Delete Grid", "Add Array", "Delete Array"]}
-                label={"Add/Delete Grid/Array"}
+                //label={"Add/Delete Grid/Array"}
             />
             <div className={"controller_buttons_container"}>
                 <button 

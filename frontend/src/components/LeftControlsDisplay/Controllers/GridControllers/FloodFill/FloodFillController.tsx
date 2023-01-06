@@ -1,26 +1,18 @@
 //#region Imports
 import React, {useState, useEffect} from "react"
-import {
-     useSelector 
-} from "react-redux";
-
 import {changeGridCellStatus, changeGridCellData} from "../../../../../features/grids/gridsSlice";
 import { useAppDispatch, useAppSelector } from "../../../../../features/hooks";
-
 import "../../controller.css"
 import {
     ARRAY_2D_GET_FOUR_DIRECTIONS_FROM_CELL,
     DirectionString,
     GRID_CELL_INDEX_HAS_DATA,
 } from "../../../../../features/grids/gridUtils"
-import { pushJSXToLog, selectProblemNumber } from "../../../../../features/problemInfo/problemSlice";
-import { clearState } from "../../../../../utils/clearState";
+import { pushJSXToLog} from "../../../../../features/problemInfo/problemSlice";
 import {SearchFromToLog } from "../logUtils";
-import { GridInterpreter, useGetGridFromProblemExampleLazyQuery } from "../../../../../__generated__/resolvers-types";
-import { handleServerGrid } from "../gridControllerUtils";
 import { withBasicGridClient, WithBasicGridClientInjectedProps } from "../withBasicGridClient";
+import { QUESTIONS_ENUM } from "../../../../../utils/questionEnum";
 //#endregion
-
 
 const TEMPLATE_FloodFillController = ({
   animationOn, play, pause, animationSpeed,
@@ -37,8 +29,8 @@ const TEMPLATE_FloodFillController = ({
     const [isEnd, setIsEnd] = useState<boolean>(false);
 
     useEffect(() => {
-        if (animationOn && problemNumber === 733) {
-            setTimeout(() => clickStep733(), animationSpeed);
+        if (animationOn && problemNumber === QUESTIONS_ENUM.FLOOD_FILL) {
+            setTimeout(() => clickStep(), animationSpeed);
         }
     }, [currentCell, animationOn])
 
@@ -52,7 +44,7 @@ const TEMPLATE_FloodFillController = ({
     }
 
     /* Problem Functions */
-    const clickSetUp733 = async () => {
+    const clickSetUp = async () => {
       setup();
     }
 
@@ -131,7 +123,7 @@ const TEMPLATE_FloodFillController = ({
     }
 
 
-    const clickStep733 = () => {
+    const clickStep = () => {
         if (gridCells[currentCell[0]][currentCell[1]].data !== toReplace) {
             let element: JSX.Element = <p><i>{`WARNING! `}</i>The cell does not have a value from which a flood fill can occur.</p>
             dispatch(pushJSXToLog({element: element}));
@@ -173,12 +165,12 @@ const TEMPLATE_FloodFillController = ({
             <div className={"controller_contents_container"}>
             <b>Flood Fill:</b>
                 <div className={"controller_buttons_container"}>
-                    <button className={"controller_button"} onClick={() => clickSetUp733()}>Set Up</button>
-                    <button className={"controller_button"} onClick={() => {isEnd ? zilch() : clickStep733()}}>Step</button>
+                    <button className={"controller_button"} onClick={() => clickSetUp()}>Set Up</button>
+                    <button className={"controller_button"} onClick={() => {isEnd ? zilch() : clickStep()}}>Step</button>
                     <button className={"controller_button"} onClick={() => pause()}>Pause</button>
                     <button className={"controller_button"} onClick={() => {
-                        if (problemNumber !== 733) {
-                            clickSetUp733();
+                        if (problemNumber !== QUESTIONS_ENUM.FLOOD_FILL) {
+                            clickSetUp();
                         }
                         play()}
                     }>Play</button>  
