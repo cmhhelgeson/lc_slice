@@ -21,39 +21,22 @@ export const CreateProblemController = ({
     pause,
     animationSpeed
 }: CreateProblemControllerProps) => {
+  const initProps = {animationOn, play, pause, animationSpeed, problemNumber}
   switch(problemNumber) {
     case QUESTIONS_ENUM.UNIQUE_PATHS: {
       return (
-        <UniquePathsOneController
-          animationOn={animationOn}
-          play={play}
-          pause={pause}
-          animationSpeed={animationSpeed}
-          problemNumber={QUESTIONS_ENUM.UNIQUE_PATHS}
-        />
+        <UniquePathsOneController {...initProps}/>
       )
     }
     case QUESTIONS_ENUM.UNIQUE_PATHS_II: {
       return (
-        <UniquePathsTwoController
-          animationOn={animationOn}
-          play={play}
-          pause={pause}
-          animationSpeed={animationSpeed}
-          problemNumber={QUESTIONS_ENUM.UNIQUE_PATHS_II}
-        />
+        <UniquePathsTwoController {...initProps}/>
       );
     }
     case QUESTIONS_ENUM.SEARCH_A_2D_MATRIX: {
       //TODO: 
       return (
-        <SearchA2DMatrixIController
-          animationOn={animationOn}
-          play={play}
-          pause={pause}
-          animationSpeed={animationSpeed}
-          problemNumber={QUESTIONS_ENUM.SEARCH_A_2D_MATRIX}
-        />
+        <SearchA2DMatrixIController {...initProps} />
       )
     }
     case QUESTIONS_ENUM.SEARCH_A_2D_MATRIX_II: {
@@ -64,44 +47,22 @@ export const CreateProblemController = ({
     }
     case QUESTIONS_ENUM.PACIFIC_ATLANTIC_WATER_FLOW: {
       return (
-        <PacificAtlanticWaterflowController 
-          animationOn={animationOn}
-          play={play}
-          pause={pause}
-          animationSpeed={animationSpeed} 
-        />
+        <PacificAtlanticWaterflowController {...initProps} />
       );
     }
     case QUESTIONS_ENUM.SHORTEST_BRIDGE: {
       return (
-        <ShortestBridgeController 
-          animationOn={animationOn}
-          play={play}
-          pause={pause}
-          animationSpeed={animationSpeed}
-          problemNumber={QUESTIONS_ENUM.SHORTEST_BRIDGE}
-        />
+        <ShortestBridgeController {...initProps} />
       )
     }
     case QUESTIONS_ENUM.FLOOD_FILL: {
       return (
-        <FloodFillController
-          animationOn={animationOn}
-          play={play}
-          pause={pause}
-          animationSpeed={animationSpeed}
-          problemNumber={QUESTIONS_ENUM.FLOOD_FILL}
-        />
+        <FloodFillController {...initProps}/>
       );
     }
     case QUESTIONS_ENUM.ALL_PATHS_FROM_SOURCE_TO_TARGET: {
       return (
-        <AllPathsFromSourceToTargetController
-          animationOn={animationOn}
-          play={play}
-          pause={pause}
-          animationSpeed={animationSpeed}
-        />
+        <AllPathsFromSourceToTargetController {...initProps}/>
       )
     }
 

@@ -1,20 +1,16 @@
 import { addNode } from "../../../../features/graphs/graphsSlice";
 import { useAppDispatch, useAppSelector } from "../../../../features/hooks"
-import { clearLog, selectProblemNumber } from "../../../../features/problemInfo/problemSlice";
+import { clearLog } from "../../../../features/problemInfo/problemSlice";
 import { addGraph, deleteAllStructs } from "../../../../features/sharedActions";
 import { BasicController } from "../BasicController";
-import { ANIMATION_PROPS } from "../controllerUtils"
-import { QUESTIONS_ENUM } from "../../../../utils/questionEnum";
+import { withBasicGridClient, WithBasicGridClientInjectedProps } from "../GridControllers/withBasicGridClient";
 
-export const AllPathsFromSourceToTargetController = ({
-    animationOn,
-    animationSpeed,
-    play,
-    pause
-}: ANIMATION_PROPS) => {
+export const TEMPLATE_AllPathsFromSourceToTargetController = ({
+    animationOn, animationSpeed, play, pause,
+    gridClient, setComplete, complete, problemNumber,
+}: WithBasicGridClientInjectedProps) => {
     const dispatch = useAppDispatch();
     const graph = useAppSelector(state => state.graphs[0]);
-    const problemNumber = useAppSelector(selectProblemNumber);
 
     const setup = () => {
         dispatch(deleteAllStructs());
@@ -40,3 +36,8 @@ export const AllPathsFromSourceToTargetController = ({
         />
     )
 }
+
+//Perhaps create a generalized client for multiple data structures.
+//TODO: Right now we are taking the grid client instead of the graph client
+export const AllPathsFromSourceToTargetController = 
+  withBasicGridClient(TEMPLATE_AllPathsFromSourceToTargetController)

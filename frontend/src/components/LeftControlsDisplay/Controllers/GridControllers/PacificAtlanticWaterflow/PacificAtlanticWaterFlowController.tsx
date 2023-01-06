@@ -16,18 +16,14 @@ import {
     DirectionString
 } from "../../../../../features/grids/gridUtils";
 import { useAppDispatch, useAppSelector } from "../../../../../features/hooks";
-import { convertArrayToFalse, convertArrayToGrid } from "../gridControllerUtils";
-import { CellStatus } from "../../../../../utils/types";
+import { convertArrayToFalse} from "../gridControllerUtils";
 import "../../controller.css"
-import { changeProblemNumber, clearLog, pushJSXToLog, selectProblemNumber } from "../../../../../features/problemInfo/problemSlice";
+import { pushJSXToLog } from "../../../../../features/problemInfo/problemSlice";
 import { BasicController } from "../../BasicController";
-import {motion} from "framer-motion"
-import { clearState } from "../../../../../utils/clearState";
 import { CellHighlighter, TextHighlighter } from "../../CellHighlighter";
 import { QUESTIONS_ENUM } from "../../../../../utils/questionEnum";
 import { GoBackFromToLog, GridCreationLog } from "../logUtils";
-import { useGetGridFromProblemExampleLazyQuery } from "../../../../../__generated__/resolvers-types";
-import { ControllerProps } from "../../controllerUtils";
+import { withBasicGridClient, WithBasicGridClientInjectedProps } from "../withBasicGridClient";
 //#endregion
 
 //Equivalent to currentCell
@@ -51,7 +47,10 @@ type P417_PROPS = {
     animationSpeed: number
 }
 
-export const PacificAtlanticWaterflowController = ({animationOn, play, pause, animationSpeed}: ControllerProps) => {
+const TEMPLATE_PacificAtlanticWaterflowController = ({
+  animationOn, play, pause, animationSpeed,
+  gridClient, setup, setComplete, complete, problemNumber
+}: WithBasicGridClientInjectedProps) => {
   /* Global State Variables */
   const dispatch = useAppDispatch();
   //Grids
@@ -62,24 +61,15 @@ export const PacificAtlanticWaterflowController = ({animationOn, play, pause, an
   const pacificCells = useAppSelector(state => state.grids[1] ? state.grids[1].cells : []);
   const atlanticCells = useAppSelector(state => state.grids[2] ? state.grids[2].cells : []);
   //Problem Number
-  const problemNumber = useAppSelector(selectProblemNumber);
   /* Local State Variables */
   const [buildFinished, setBuildFinished] = useState<boolean>(false);
   const [currentCell, setCurrentCell] = useState<P417_CURRENT_CONTEXT_TYPE>([0, 0])
   const [stackContext, setStackContext] = useState<P417_STACK_CONTEXT_UNIT_TYPE[]>([]);
   const [globals, setGlobals] = useState<P417_GLOBALS>("PACIFIC");
-  const [example, setExample] = useState<number>(0);
   /*Client State Variables */
-  const [getGrid, gridClient] = useGetGridFromProblemExampleLazyQuery();
 
   const clickSetUp = async () => {
-    clearState(dispatch, 417);
-    await getGrid({
-      variables: {
-        number: QUESTIONS_ENUM.PACIFIC_ATLANTIC_WATER_FLOW,
-        example: example
-      }
-    });
+    setup();
   }
 
   useEffect(() => {
@@ -87,15 +77,13 @@ export const PacificAtlanticWaterflowController = ({animationOn, play, pause, an
     if (gridClient.data && gridClient.data.problem && gridClient.data.problem.grids && gridClient.data.problem.grids[0]) {
       const {interpretAs, gridData} = gridClient.data.problem.grids[0];
       //TODO: This is also bad
-      const grid = convertArrayToGrid(gridData as number[][], interpretAs as "NUMBER" | "BOOLEAN" | "NORMALIZED");
       const booleanGrid = convertArrayToFalse(gridData as any[][]);
-      dispatch(copyGrids([grid, booleanGrid, booleanGrid]));
-      setExample((example + 1) % gridClient.data.problem.numExamples);
+      dispatch(copyGrids([booleanGrid, booleanGrid]));
       const element = (
         <GridCreationLog
           dispatch={dispatch}
-          numStructs={3}
-          labels={["Waterflow Grid", "Pacific Grid", "Atlantic Grid"]}
+          numStructs={2}
+          labels={["Pacific Grid", "Atlantic Grid"]}
         />
       );
       setBuildFinished(true);
@@ -383,3 +371,6 @@ export const PacificAtlanticWaterflowController = ({animationOn, play, pause, an
         </>
     );
 }
+
+export const PacificAtlanticWaterflowController = 
+  withBasicGridClient(TEMPLATE_PacificAtlanticWaterflowController);
