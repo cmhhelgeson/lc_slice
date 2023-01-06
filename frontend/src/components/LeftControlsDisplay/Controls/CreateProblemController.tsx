@@ -2,10 +2,9 @@ import React from "react"
 import {PacificAtlanticWaterflowController, FloodFillController} from "../Controllers/GridControllers"
 import { AllPathsFromSourceToTargetController } from "../Controllers/GraphControllers/AllPathsFromSourceToTargetController"
 import { QUESTIONS_ENUM } from "../../../utils/questionEnum"
-import { ShortestBridgeController } from "../Controllers/GridControllers/ShortestBridgeController"
-import { UniquePathsOne } from "../Controllers/GridControllers/UniquePaths/UniquePathsOne"
-import { UniquePathsTwo } from "../Controllers/GridControllers/UniquePaths"
-import { SearchA2DMatrixI } from "../Controllers/GridControllers/SearchA2DMatrix"
+import { ShortestBridgeController } from "../Controllers/GridControllers/ShortestBridge/ShortestBridgeController"
+import { UniquePathsOneController, UniquePathsTwoController} from "../Controllers/GridControllers/UniquePaths/"
+import { SearchA2DMatrixIController } from "../Controllers/GridControllers/SearchA2DMatrix"
 
 type CreateProblemControllerProps = {
     problemNumber: number,
@@ -25,28 +24,30 @@ export const CreateProblemController = ({
   switch(problemNumber) {
     case QUESTIONS_ENUM.UNIQUE_PATHS: {
       return (
-        <UniquePathsOne 
+        <UniquePathsOneController
           animationOn={animationOn}
           play={play}
           pause={pause}
           animationSpeed={animationSpeed}
+          problemNumber={QUESTIONS_ENUM.UNIQUE_PATHS}
         />
       )
     }
     case QUESTIONS_ENUM.UNIQUE_PATHS_II: {
       return (
-        <UniquePathsTwo
+        <UniquePathsTwoController
           animationOn={animationOn}
           play={play}
           pause={pause}
           animationSpeed={animationSpeed}
+          problemNumber={QUESTIONS_ENUM.UNIQUE_PATHS_II}
         />
       );
     }
     case QUESTIONS_ENUM.SEARCH_A_2D_MATRIX: {
       //TODO: 
       return (
-        <SearchA2DMatrixI 
+        <SearchA2DMatrixIController
           animationOn={animationOn}
           play={play}
           pause={pause}
@@ -78,6 +79,7 @@ export const CreateProblemController = ({
           play={play}
           pause={pause}
           animationSpeed={animationSpeed}
+          problemNumber={QUESTIONS_ENUM.SHORTEST_BRIDGE}
         />
       )
     }
@@ -88,6 +90,7 @@ export const CreateProblemController = ({
           play={play}
           pause={pause}
           animationSpeed={animationSpeed}
+          problemNumber={QUESTIONS_ENUM.FLOOD_FILL}
         />
       );
     }
@@ -102,15 +105,14 @@ export const CreateProblemController = ({
       )
     }
 
-
     case QUESTIONS_ENUM.MINIMUM_SWAPS_TO_ARRANGE_A_BINARY_GRID: {
-      //COMPLETE!
+      //TODO:!
       return (
         <h1>Invalid Problem selected!</h1>
       )
     }
     case QUESTIONS_ENUM.DETECT_CYCLES_IN_2D_GRID: {
-      //COMPLETE!
+      //TODO: !
       return (
         <h1>Invalid Problem Selected!</h1>
       )

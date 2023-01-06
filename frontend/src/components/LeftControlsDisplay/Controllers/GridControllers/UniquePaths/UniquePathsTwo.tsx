@@ -12,41 +12,25 @@ import { UniquePathsInitialCellSetup } from "./uniquePathsHelpers";
 import { ARRAY_2D_GET_NEXT_INDEX, ARRAY_2D_GET_TWO_DIRECTIONS_FROM_CELL } from "../../../../../features/grids/gridUtils";
 import { pushJSXToLog } from "../../../../../features/problemInfo/problemSlice";
 import { CellHighlighter } from "../../CellHighlighter";
+import { withBasicGridClient, WithBasicGridClientInjectedProps } from "../withBasicGridClient";
 
 
-export const UniquePathsTwo = ({animationOn, play, pause, animationSpeed}: ControllerProps) => {
+const TEMPLATE_UniquePathsTwoController = ({
+  animationOn, play, pause, animationSpeed,
+  gridClient, complete, setComplete, problemNumber, setup
+}: WithBasicGridClientInjectedProps) => {
   /* Global State Variables */
   const dispatch = useAppDispatch();
   const grid = useAppSelector(state => state.grids[0] ? state.grids[0].cells : []);
-  const problemNumber = useAppSelector(state => state.problem.problemNumber);
   /* Local State Variables */
   const [example, setExample] = useState<number>(0);
   /* Client State Variables */
-  const [getGrid, gridClient] = useGetGridFromProblemExampleLazyQuery();
   const [currentCell, setCurrentCell] = useState<[number, number]>([0, 0]);
-  const [complete, setComplete] = useState<boolean>(false);
-
 
   const clickSetUp = async () => {
-    clearState(dispatch, QUESTIONS_ENUM.UNIQUE_PATHS_II);
-    await getGrid({
-      variables: {
-        number: QUESTIONS_ENUM.UNIQUE_PATHS_II,
-        example: example,
-      }
-    })
+    setup();
+    setCurrentCell([0, 0]);
   }
-
-  useEffect(() => {
-    if (gridClient.data && gridClient.data.problem && gridClient.data.problem.grids && gridClient.data.problem.grids[0]) {
-      const {interpretAs, gridData, label} = gridClient.data.problem.grids[0];
-      handleServerGrid(dispatch, gridData as number[][], label as string, interpretAs as GridInterpreter);
-      setExample((example + 1) % gridClient.data.problem.numExamples);
-      dispatch(changeGridCellStatus({gridIndex: 0, row: 0, col: 0, status: "CURRENT"}));
-      setCurrentCell([0, 0]);
-      setComplete(false);
-    }
-  }, [gridClient]);
 
   const clickStep = () => {
     if (complete) {
@@ -180,3 +164,6 @@ export const UniquePathsTwo = ({animationOn, play, pause, animationSpeed}: Contr
     />
   );
 }
+
+export const UniquePathsTwoController = 
+  withBasicGridClient(TEMPLATE_UniquePathsTwoController);

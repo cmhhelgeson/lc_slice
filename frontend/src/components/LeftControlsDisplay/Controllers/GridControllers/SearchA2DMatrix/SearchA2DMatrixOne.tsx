@@ -5,16 +5,15 @@ import { changeGridCellStatus } from "../../../../../features/grids/gridsSlice";
 import { BasicController } from "../../BasicController";
 import {WithBasicGridClientInjectedProps, withBasicGridClient } from "../withBasicGridClient"
 
-const TEMPLATE_SearchA2DMatrixI = ({
+const TEMPLATE_SearchA2DMatrixIController = ({
   animationOn, play, pause, animationSpeed,
-  problemNumber, gridClient, setup
+  problemNumber, gridClient, setup, setComplete, complete
 }: WithBasicGridClientInjectedProps) => {
   const dispatch = useAppDispatch();
   const grid = useAppSelector(state => state.grids[0] ? state.grids[0].cells : []);
   /* Client State Variables */
-  const [complete, setComplete] = useState<boolean>(false);
   const [start, setStart] = useState<boolean>(false);
-  const [target, setTarget] = useState<number>(144);
+  const [target, setTarget] = useState<number>(34);
   const [iteration, setIteration] = useState<number>(0);
   const [targetRow, setTargetRow] = useState<number>(-1);
 
@@ -23,7 +22,6 @@ const TEMPLATE_SearchA2DMatrixI = ({
     setIteration(0);
     setTargetRow(-1);
     setStart(false);
-    setComplete(false);
   }
 
   const getRowPointers = (
@@ -181,6 +179,6 @@ const TEMPLATE_SearchA2DMatrixI = ({
   );
 }
 
-export const SearchA2DMatrixI = 
-  withBasicGridClient(TEMPLATE_SearchA2DMatrixI)
+export const SearchA2DMatrixIController = 
+  withBasicGridClient(TEMPLATE_SearchA2DMatrixIController)
 

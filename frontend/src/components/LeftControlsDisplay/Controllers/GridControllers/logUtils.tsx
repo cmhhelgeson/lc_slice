@@ -29,9 +29,6 @@ export const GridCreationLog = ({
 }
 
 
-
-
-
 type SearchFromToLogProps = {
     dispatch: any,
     direction: string,

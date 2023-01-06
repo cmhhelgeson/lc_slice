@@ -1,83 +1,43 @@
 // #region Imports
 import React, { useEffect, useState } from "react"
-import { pushData, shift } from "../../../../features/arrays/arraysSlice"
-import { changeGridCellStatus, clearGridCellsStatus, copyGrids, floodFillFromInputWithQueue} from "../../../../features/grids/gridsSlice"
-import { ARRAY_2D_GET_FOUR_DIRECTIONS_FROM_CELL } from "../../../../features/grids/gridUtils"
-import { useAppDispatch, useAppSelector } from "../../../../features/hooks"
-import { pushJSXToLog } from "../../../../features/problemInfo/problemSlice"
-import { addArray, deleteArray } from "../../../../features/sharedActions"
-import { QUESTIONS_ENUM } from "../../../../utils/questionEnum"
-import { useGetGridFromProblemExampleLazyQuery } from "../../../../__generated__/resolvers-types"
-import { BasicController } from "../BasicController"
-import {ControllerProps} from "../controllerUtils"
-import { clearState } from "../../../../utils/clearState"
-import { convertArrayToGrid, createStringFromCurrentCell, iterateToNextCell, parseCurrentCellFromString } from "./gridControllerUtils"
-import { GridCreationLog, LengthEdgeCaseLog} from "./logUtils"
+import { pushData, shift } from "../../../../../features/arrays/arraysSlice"
+import { changeGridCellStatus, clearGridCellsStatus} from "../../../../../features/grids/gridsSlice"
+import { ARRAY_2D_GET_FOUR_DIRECTIONS_FROM_CELL } from "../../../../../features/grids/gridUtils"
+import { useAppDispatch, useAppSelector } from "../../../../../features/hooks"
+import { pushJSXToLog } from "../../../../../features/problemInfo/problemSlice"
+import { addArray, deleteArray } from "../../../../../features/sharedActions"
+import { QUESTIONS_ENUM } from "../../../../../utils/questionEnum"
+import { BasicController } from "../../BasicController"
+import { createStringFromCurrentCell, iterateToNextCell, parseCurrentCellFromString } from "../gridControllerUtils"
+import {  LengthEdgeCaseLog} from "../logUtils"
+import { WithBasicGridClientInjectedProps } from "../withBasicGridClient"
 
 //#endregion
 
 type NumberCell = [number, number];
 
-export const ShortestBridgeController = ({
-  animationOn,
-  play,
-  pause,
-  animationSpeed
-}: ControllerProps) => {
+export const ShortestPathInBinaryMatrixController = ({
+  animationOn, play, pause, animationSpeed,
+  gridClient, setComplete, complete, setup, problemNumber
+}: WithBasicGridClientInjectedProps) => {
   /* Redux State variables */
   const dispatch = useAppDispatch();
   const grid = useAppSelector(state => state.grids[0] ? state.grids[0].cells : []);
   const queue = useAppSelector(state => state.arrays[0] ? state.arrays[0].data: []);
   const logLength = useAppSelector(state => state.problem.problemLog.length);
-  const problemNumber = useAppSelector(state => state.problem.problemNumber);
   /* Local state variables */
-  const [example, setExample] = useState<number>(0);
   /* Client state variables */
-  const [getGrid, gridClient] = useGetGridFromProblemExampleLazyQuery();
   //Create current context, array of cells
   const [currentCell, setCurrentCell] = useState<NumberCell>([0, 0]);
   const [bridgeLength, setBridgeLength] = useState<number>(0);
-  const [problemComplete, setProblemComplete] = useState<boolean>(false);
 
   /* Setup Function */
   const clickSetUp = async () => {
-    setProblemComplete(false);
-    clearState(dispatch, QUESTIONS_ENUM.SHORTEST_PATH_IN_BINARY_MATRIX);
-    await getGrid({
-      variables: {
-        number: QUESTIONS_ENUM.SHORTEST_PATH_IN_BINARY_MATRIX,
-        example: example,
-      }
-    });
+    setup();
   }
 
-  /* Asynchronously complete set up once data has been fetched */
-  useEffect(() => {
-    //TODO: This is a bad way to deal with undefined
-    if (gridClient.data && gridClient.data.problem && gridClient.data.problem.grids && gridClient.data.problem.grids[0]) {
-      const {interpretAs, gridData, label} = gridClient.data.problem.grids[0];
-      //TODO: This is also bad
-      const grid = convertArrayToGrid(gridData as number[][], interpretAs as "NUMBER" | "BOOLEAN" | "NORMALIZED");
-      dispatch(copyGrids([grid]));
-      setExample((example + 1) % gridClient.data.problem.numExamples);
-      dispatch(changeGridCellStatus({gridIndex: 0, row: 0, col: 0, status: "CURRENT"}));
-      const element = (
-        <GridCreationLog
-          dispatch={dispatch}
-          numStructs={1}
-          labels={[
-            label ? label : "Grids #1"
-          ]}
-        />
-      );
-      dispatch(pushJSXToLog({element: element}));
-    }
-  }, [gridClient]);
-
-  //TODO: Network error checking
-
   const clickStep = () => {
-    if (problemComplete) {
+    if (complete) {
       return;
     }
     //Check for Edge Cases
@@ -85,11 +45,11 @@ export const ShortestBridgeController = ({
       if (logLength !== 2) {
         dispatch(pushJSXToLog({element: LengthEdgeCaseLog(dispatch)}));
       }
-      setProblemComplete(true);
+      setComplete(true);
       return;
     }
     if (grid[0][0].data === 1 || grid[grid.length - 1][grid[0].length - 1].data === 1) {
-      setProblemComplete(true);
+      setComplete(true);
       dispatch(pushJSXToLog({element: (<p>No path exists between start and end points!</p>)}));
 
     }
@@ -115,7 +75,7 @@ export const ShortestBridgeController = ({
             dispatch(clearGridCellsStatus({gridIndex: 0, defaultStatus: "UNEXPLORED"}));
             dispatch(changeGridCellStatus({gridIndex: 0, row: newRow, col: newCol, status: "CURRENT"}));
             dispatch(deleteArray({num: 1, arraysLength: 1}));
-            setProblemComplete(true);
+            setComplete(true);
             const element: JSX.Element = (
               <p>
                 {`Second island found! Length of shortest bridge is `}
@@ -180,7 +140,7 @@ export const ShortestBridgeController = ({
 
   //If playing and the current context changes, click step again.
   useEffect(() => {
-    if (animationOn && problemNumber === QUESTIONS_ENUM.SHORTEST_BRIDGE) {
+    if (animationOn && problemNumber === QUESTIONS_ENUM.SHORTEST_PATH_IN_BINARY_MATRIX) {
       setTimeout(() => clickStep(), animationSpeed);
     }
   }, [animationOn]); //curentContext to array
@@ -190,7 +150,7 @@ export const ShortestBridgeController = ({
     <BasicController
       label={"Label For Shortest Bridge Problem"}
       play={() => {
-        if (problemNumber !== QUESTIONS_ENUM.SHORTEST_BRIDGE) {
+        if (problemNumber !== QUESTIONS_ENUM.SHORTEST_PATH_IN_BINARY_MATRIX) {
           clickSetUp();
         }
         play();

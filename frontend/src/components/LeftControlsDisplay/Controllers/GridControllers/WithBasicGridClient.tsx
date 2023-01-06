@@ -22,6 +22,8 @@ export type WithBasicGridClientInjectedProps = {
     example?: InputMaybe<number> | undefined;
   }>>
   setup: () => Promise<void>
+  setComplete: (b: boolean) => void
+  complete: boolean
 }
 
 export type WithBasicGridClientProviderProps = {
@@ -39,6 +41,11 @@ export const withBasicGridClient = (
     const dispatch = useAppDispatch();
     const [getGrid, gridClient] = useGetGridFromProblemExampleLazyQuery(); 
     const [example, setExample] = useState<number>(0);
+    const [complete, setCompleteTemplate] = useState<boolean>(false);
+
+    const setComplete = (b: boolean) => {
+      setCompleteTemplate(b)
+    }
 
     const clickSetUp = async () => {
       props.pause();
@@ -66,12 +73,15 @@ export const withBasicGridClient = (
             labels={["Grid #1"]}
           />
         );
-        dispatch(pushJSXToLog({element: element}))
+        dispatch(pushJSXToLog({element: element}));
+        setCompleteTemplate(false);
       }
     }, [gridClient])
 
     return <WrappedComponent {...props} 
       setup={clickSetUp} 
+      setComplete={setComplete}
+      complete={complete}
       gridClient={gridClient}
     />
   } 

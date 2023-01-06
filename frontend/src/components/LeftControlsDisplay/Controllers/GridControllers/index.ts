@@ -1,2 +1,2 @@
-export * from "./FloodFillController"
-export * from "./PacificAtlanticWaterflow/"
+export * from "./FloodFill/FloodFillController"
+export * from "./PacificAtlanticWaterflow"

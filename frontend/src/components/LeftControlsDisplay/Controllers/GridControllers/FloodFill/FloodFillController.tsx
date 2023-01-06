@@ -4,43 +4,37 @@ import {
      useSelector 
 } from "react-redux";
 
-import {changeGridCellStatus, changeGridCellData} from "../../../../features/grids/gridsSlice";
-import { useAppDispatch, useAppSelector } from "../../../../features/hooks";
+import {changeGridCellStatus, changeGridCellData} from "../../../../../features/grids/gridsSlice";
+import { useAppDispatch, useAppSelector } from "../../../../../features/hooks";
 
-import "../controller.css"
+import "../../controller.css"
 import {
     ARRAY_2D_GET_FOUR_DIRECTIONS_FROM_CELL,
     DirectionString,
     GRID_CELL_INDEX_HAS_DATA,
-} from "../../../../features/grids/gridUtils"
-import { pushJSXToLog, selectProblemNumber } from "../../../../features/problemInfo/problemSlice";
-import { clearState } from "../../../../utils/clearState";
-import {SearchFromToLog } from "./logUtils";
-import { QUESTIONS_ENUM } from "../../../../utils/questionEnum";
-import { GridInterpreter, useGetGridFromProblemExampleLazyQuery } from "../../../../__generated__/resolvers-types";
-import { handleServerGrid } from "./gridControllerUtils";
+} from "../../../../../features/grids/gridUtils"
+import { pushJSXToLog, selectProblemNumber } from "../../../../../features/problemInfo/problemSlice";
+import { clearState } from "../../../../../utils/clearState";
+import {SearchFromToLog } from "../logUtils";
+import { GridInterpreter, useGetGridFromProblemExampleLazyQuery } from "../../../../../__generated__/resolvers-types";
+import { handleServerGrid } from "../gridControllerUtils";
+import { withBasicGridClient, WithBasicGridClientInjectedProps } from "../withBasicGridClient";
 //#endregion
 
-type P733_PROPS = {
-    animationOn: boolean,
-    play: () => void,
-    pause: () => void,
-    animationSpeed: number
-}
 
-export const FloodFillController = ({animationOn, play, pause, animationSpeed}: P733_PROPS) => {
+const TEMPLATE_FloodFillController = ({
+  animationOn, play, pause, animationSpeed,
+  gridClient, setup, problemNumber
+}: WithBasicGridClientInjectedProps) => {
     /* Access the Global State */
     const dispatch = useAppDispatch();
     const gridCells = useAppSelector(state => state.grids[0] ? state.grids[0].cells : []);
-    const problemNumber = useSelector(selectProblemNumber);
     /* Local State */
     const [toReplace, setToReplace] = useState<number>(0);
     const [replaceWith, setReplaceWith] = useState<number>(2);
     const [currentCell, setCurrentCell] = useState<[number, number]>([0, 0]);
     const [stack, setStack] = useState<[number, number][]>([]);
     const [isEnd, setIsEnd] = useState<boolean>(false);
-    const [example, setExample] = useState<number>(0);
-    const [getGrid, gridClient] = useGetGridFromProblemExampleLazyQuery();
 
     useEffect(() => {
         if (animationOn && problemNumber === 733) {
@@ -59,24 +53,13 @@ export const FloodFillController = ({animationOn, play, pause, animationSpeed}: 
 
     /* Problem Functions */
     const clickSetUp733 = async () => {
-      //Stop any animations
-      pause();
-      //Delete all structs
-      clearState(dispatch, 733);
-      await getGrid({
-        variables: {
-          number: QUESTIONS_ENUM.FLOOD_FILL,
-          example: 0,
-        }
-      });
+      setup();
     }
 
     useEffect(() => {
       if (gridClient.data && gridClient.data.problem && gridClient.data.problem.grids && gridClient.data.problem.grids[0] ) {
         const {interpretAs, gridData, label} = gridClient.data.problem.grids[0];
         //TODO: This is also bad
-        handleServerGrid(dispatch, gridData as number[][], label as string | undefined, interpretAs as GridInterpreter);
-        setExample((example + 1) % gridClient.data.problem.numExamples);
         dispatch(changeGridCellStatus({
           gridIndex: 0,
           row: 0, 
@@ -225,5 +208,7 @@ export const FloodFillController = ({animationOn, play, pause, animationSpeed}: 
             </div>
         </div>
     );
-
 }
+
+export const FloodFillController = withBasicGridClient(TEMPLATE_FloodFillController)
+
