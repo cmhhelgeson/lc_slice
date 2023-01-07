@@ -12,6 +12,7 @@ import { pushJSXToLog} from "../../../../../features/problemInfo/problemSlice";
 import {SearchFromToLog } from "../logUtils";
 import { withBasicGridClient, WithBasicGridClientInjectedProps } from "../withBasicGridClient";
 import { QUESTIONS_ENUM } from "../../../../../utils/questionEnum";
+import { BasicController } from "../../BasicController";
 //#endregion
 
 const TEMPLATE_FloodFillController = ({
@@ -161,46 +162,23 @@ const TEMPLATE_FloodFillController = ({
     }
 
     return (
-        <div className={"controller"}>
-            <div className={"controller_contents_container"}>
-            <b>Flood Fill:</b>
-                <div className={"controller_buttons_container"}>
-                    <button className={"controller_button"} onClick={() => clickSetUp()}>Set Up</button>
-                    <button className={"controller_button"} onClick={() => {isEnd ? zilch() : clickStep()}}>Step</button>
-                    <button className={"controller_button"} onClick={() => pause()}>Pause</button>
-                    <button className={"controller_button"} onClick={() => {
-                        if (problemNumber !== QUESTIONS_ENUM.FLOOD_FILL) {
-                            clickSetUp();
-                        }
-                        play()}
-                    }>Play</button>  
-                </div>
-                <div className={"controller_buttons_container"}>
-                    Replace:
-                    <input 
-                        type="number"
-                        min={0}
-                        max={9}
-                        step={1}
-                        value={toReplace}
-                        onChange={onChangeToReplace}
-                        style={{"marginLeft": "5px", "width": "40px", "marginRight": "5px"}}
-                    />
-                    With: 
-                    <input 
-                        type="number"
-                        min={0}
-                        max={9}
-                        step={1}
-                        value={replaceWith}
-                        onChange={onChangeReplaceWith}
-                        style={{"width": "40px", "marginLeft": "5px"}}
-                    />
-                </div>
-            </div>
-        </div>
-    );
+      <BasicController
+        label={"Flood Fill"}
+        setup={clickSetUp}
+        step={clickStep}
+        pause={pause}
+        play={() => {
+          if (problemNumber !== QUESTIONS_ENUM.FLOOD_FILL) {
+              clickSetUp();
+          }
+          play();
+        }}
+        exInputs={{
+          labels: ["Replace: ", "With: "],
+          actions: [onChangeToReplace, onChangeReplaceWith]
+        }}
+      />
+    );     
 }
-
 export const FloodFillController = withBasicGridClient(TEMPLATE_FloodFillController)
 

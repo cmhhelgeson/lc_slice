@@ -38,14 +38,6 @@ type P417_STACK_CONTEXT_UNIT_TYPE = {
 //Designates whether to flood fill pacific or atlantic
 type P417_GLOBALS = "PACIFIC" | "ATLANTIC"
 
-//Ideally only one question at a time should be displayed, 
-//so this shouldn't trigger multiple animations at once
-type P417_PROPS = {
-    animationOn: boolean,
-    play: () => void;
-    pause: () => void;
-    animationSpeed: number
-}
 
 const TEMPLATE_PacificAtlanticWaterflowController = ({
   animationOn, play, pause, animationSpeed,
@@ -203,10 +195,14 @@ const TEMPLATE_PacificAtlanticWaterflowController = ({
             );
             dispatch(pushJSXToLog({element: element}));
             pause();
+            setComplete(true);
         }
     }
 
     const clickStep = () => {
+      if (complete) {
+        return;
+      }
         if (!buildFinished) {
             clickSetUp();
         }

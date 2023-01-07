@@ -17,8 +17,6 @@ const TEMPLATE_UniquePathsOneController = ({
   const dispatch = useAppDispatch();
   const grid = useAppSelector(state => state.grids[0] ? state.grids[0].cells : []);
   /* Local State Variables */
-  const [example, setExample] = useState<number>(0);
-  /* Client State Variables */
   const [currentCell, setCurrentCell] = useState<[number, number]>([0, 0]);
 
   const clickSetUp = async () => {

@@ -29,10 +29,6 @@ const TEMPLATE_ShortestBridgeController = ({
   const queue = useAppSelector(state => state.arrays[0] ? state.arrays[0].data: []);
   const logLength = useAppSelector(state => state.problem.problemLog.length);
   /* Local state variables */
-  const [example, setExample] = useState<number>(0);
-  /* Client state variables */
-  //Create current context, array of cells
-  const [currentContext, setCurrentContext] = useState<NumberCell[]>([[0, 0]]);
   const [currentCell, setCurrentCell] = useState<NumberCell>([0, 0]);
   const [bridgeLength, setBridgeLength] = useState<number>(0);
 

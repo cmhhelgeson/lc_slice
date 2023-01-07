@@ -26,8 +26,6 @@ export const ShortestPathInBinaryMatrixController = ({
   const queue = useAppSelector(state => state.arrays[0] ? state.arrays[0].data: []);
   const logLength = useAppSelector(state => state.problem.problemLog.length);
   /* Local state variables */
-  /* Client state variables */
-  //Create current context, array of cells
   const [currentCell, setCurrentCell] = useState<NumberCell>([0, 0]);
   const [bridgeLength, setBridgeLength] = useState<number>(0);
 

@@ -1,30 +1,33 @@
 import "./controller.css"
-
-type BasicControllerDivProps = {
-    label: string,
-    setup: () => void,
-    step: () => void,
-    pause: () => void,
-    play: () => void,
-}
+import { FormEvent } from "react"
 
 type BasicControllerButtonOverrideProps = {
   buttonLabels: string[],
   buttonActions: (() => void)[]
 }
 
-type BasicControllerInputOverrideProps = {
-  inputLabels: string[],
-  inputActions: (() => void)[]
+type BasicControllerInputOverrideProps = Required<Pick<BasicControllerProps, "exInputs">>
+
+type BasicControllerProps = {
+  label: string,
+  setup: () => void,
+  step: () => void,
+  pause: () => void,
+  play: () => void,
+  exButtons?: {
+    labels: string[]
+    actions: (() => void)[],
+  }
+  exInputs?: {
+    labels: string[],
+    actions: ((e: FormEvent<HTMLInputElement>) => void)[]
+  }
 }
 
 export const BasicController = ({
-  label,
-  setup,
-  step,
-  pause,
-  play,
-}: BasicControllerDivProps) => {
+  label, setup, step, pause, play,
+  exButtons, exInputs
+}: BasicControllerProps) => {
   return (
     <div className={"controller"}>
       <div className={"controller_contents_container"}>
@@ -33,32 +36,14 @@ export const BasicController = ({
           buttonLabels={["Set Up", "Step", "Pause", "Play"]}
           buttonActions={[setup, step, pause, play]}
         />
-      </div>
-    </div>     
-  ) 
-}
-
-export const BasicControllerWithInput = ({
-  label, 
-  setup, 
-  step,
-  pause,
-  play,
-  inputLabels,
-  inputActions,
-}: BasicControllerDivProps & BasicControllerInputOverrideProps) => {
-  return (
-    <div className={"controller"}>
-      <div className={"controller_contents_container"}>
-        <b>{label}</b>
+        {exButtons ? 
           <ControllerButtons 
-            buttonLabels={["Set Up", "Step", "Pause", "Play"]}
-            buttonActions={[setup, step, pause, play]}
-          />
-          <ControllerInputs 
-            inputLabels={inputLabels}
-            inputActions={inputActions}
-          />
+            buttonLabels={exButtons.labels} 
+            buttonActions={exButtons.actions}
+          /> : 
+          null 
+        }
+        {exInputs ? <ControllerInputs exInputs={exInputs}/> : null}
       </div>
     </div>     
   ) 
@@ -74,16 +59,16 @@ export const ControllerButtons = ({buttonLabels, buttonActions} : BasicControlle
   )
 }
 
-export const ControllerInputs = ({inputLabels, inputActions}: BasicControllerInputOverrideProps) => {
+export const ControllerInputs = ({exInputs}: BasicControllerInputOverrideProps) => {
+  const {labels, actions} = exInputs;
   return (
     <div className={"controller_buttons_container"}>
-      {inputActions.map( ( action, idx ) => (
+      {actions.map( ( action, idx ) => (
         <div>
-          {inputLabels[idx] ? inputLabels[idx] : "Input: "}
+          {labels[idx] ? labels[idx] : "Input: "}
           <input 
-            key={inputLabels[idx] ? inputLabels[idx] : idx}
+            key={labels[idx] ? labels[idx] : idx}
             className={"controller_button"}
-            onClick={() => action()}
             style={{"marginLeft": "5px", "width": "40px", "marginRight": "5px"}}
           />
         </div> 
@@ -93,4 +78,13 @@ export const ControllerInputs = ({inputLabels, inputActions}: BasicControllerInp
 }
 
 
-
+With: 
+                    <input 
+                        type="number"
+                        min={0}
+                        max={9}
+                        step={1}
+                        value={replaceWith}
+                        onChange={onChangeReplaceWith}
+                        style={{"width": "40px", "marginLeft": "5px"}}
+                    />

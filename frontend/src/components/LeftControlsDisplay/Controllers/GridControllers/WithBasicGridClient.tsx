@@ -11,12 +11,16 @@ import { GridCreationLog } from "./logUtils";
 import { pushJSXToLog } from "../../../../features/problemInfo/problemSlice";
 
 
-export type WithBasicGridClientInjectedProps = {
+
+export interface WithBasicGridClientProviderProps {
   animationOn: boolean,
   play: () => void,
   pause: () => void,
   animationSpeed: number,
   problemNumber: number,
+}
+
+export interface WithBasicGridClientInjectedProps extends WithBasicGridClientProviderProps {
   gridClient: QueryResult<GetGridFromProblemExampleQuery, Exact<{
     number?: InputMaybe<number> | undefined;
     example?: InputMaybe<number> | undefined;
@@ -24,14 +28,6 @@ export type WithBasicGridClientInjectedProps = {
   setup: () => Promise<void>
   setComplete: (b: boolean) => void
   complete: boolean
-}
-
-export type WithBasicGridClientProviderProps = {
-  animationOn: boolean,
-  play: () => void,
-  pause: () => void,
-  animationSpeed: number,
-  problemNumber: number,
 }
 
 export const withBasicGridClient = (
