@@ -62,7 +62,12 @@ export const CreateProblemController = ({
     }
     case QUESTIONS_ENUM.ALL_PATHS_FROM_SOURCE_TO_TARGET: {
       return (
-        <AllPathsFromSourceToTargetController {...initProps}/>
+        <AllPathsFromSourceToTargetController  
+          animationOn={animationOn}
+          animationSpeed={animationSpeed}
+          play={play}
+          pause={pause}
+        />
       )
     }
 

@@ -20,7 +20,10 @@ type BasicControllerProps = {
   }
   exInputs?: {
     labels: string[],
-    actions: ((e: FormEvent<HTMLInputElement>) => void)[]
+    values: number[],
+    actions: ((e: FormEvent<HTMLInputElement>) => void)[],
+    min: number,
+    max: number,
   }
 }
 
@@ -60,13 +63,19 @@ export const ControllerButtons = ({buttonLabels, buttonActions} : BasicControlle
 }
 
 export const ControllerInputs = ({exInputs}: BasicControllerInputOverrideProps) => {
-  const {labels, actions} = exInputs;
+  const {labels, actions, min, max, values} = exInputs;
   return (
     <div className={"controller_buttons_container"}>
       {actions.map( ( action, idx ) => (
         <div>
           {labels[idx] ? labels[idx] : "Input: "}
           <input 
+            type="number"
+            min={min}
+            max={max}
+            step={1}
+            onChange={action}
+            value={values[idx]}
             key={labels[idx] ? labels[idx] : idx}
             className={"controller_button"}
             style={{"marginLeft": "5px", "width": "40px", "marginRight": "5px"}}
@@ -76,15 +85,3 @@ export const ControllerInputs = ({exInputs}: BasicControllerInputOverrideProps) 
     </div>  
   );        
 }
-
-
-With: 
-                    <input 
-                        type="number"
-                        min={0}
-                        max={9}
-                        step={1}
-                        value={replaceWith}
-                        onChange={onChangeReplaceWith}
-                        style={{"width": "40px", "marginLeft": "5px"}}
-                    />
