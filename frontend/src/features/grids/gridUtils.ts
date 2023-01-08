@@ -34,6 +34,19 @@ export const ARRAY_2D_GET_NEXT_INDEX = <T,>(arr: T[][], row: number, col: number
     return [row, col + 1];
 }
 
+export const ARRAY_2D_GET_PREVIOUS_INDEX = <T,>(arr: T[][], row: number, col: number): [number, number] => {
+  if (ARRAY_2D_IS_VALID_INDEX(arr, row, col) === false) {
+    return [-1, -1];
+  }
+  if (row === 0 && col === 0) {
+    return [arr.length - 1, arr[0].length - 1];
+  }
+  if (col === 0 && ARRAY_2D_IS_VALID_INDEX(arr, row - 1, arr[0].length - 1)) {
+    return [row - 1, arr[0].length - 1];
+  }
+  return [row, col - 1];
+}
+
 
 export type DirectionString = "north" | "northeast" | "east" | "southeast" | "south" | "southwest" | "west" | "northwest" | "none" | "undefined"
 

@@ -4,6 +4,7 @@ import { QUESTIONS_ENUM } from "../../../../../utils/questionEnum";
 import { changeGridCellStatus } from "../../../../../features/grids/gridsSlice";
 import { BasicController } from "../../BasicController";
 import {WithBasicGridClientInjectedProps, withBasicGridClient } from "../withBasicGridClient"
+import { iterateToNextCell, iterateToPreviousCell } from "../gridControllerUtils";
 
 const TEMPLATE_SearchA2DMatrixIController = ({
   animationOn, play, pause, animationSpeed,
@@ -13,7 +14,7 @@ const TEMPLATE_SearchA2DMatrixIController = ({
   const grid = useAppSelector(state => state.grids[0] ? state.grids[0].cells : []);
   /* Client State Variables */
   const [start, setStart] = useState<boolean>(false);
-  const [target, setTarget] = useState<number>(34);
+  const [target, setTarget] = useState<number>(144);
   const [iteration, setIteration] = useState<number>(0);
   const [targetRow, setTargetRow] = useState<number>(-1);
 
@@ -37,36 +38,11 @@ const TEMPLATE_SearchA2DMatrixIController = ({
     targetRow: number,
     iteration: number,
   ) => {
-    const leftCol = 0 + iteration;
-    const rightCol = grid[0].length - 1 - iteration;
-    console.log(`Setting columns ${leftCol} & ${rightCol} to Unexplored`)
-    dispatch(changeGridCellStatus({
-      gridIndex: 0,
-      row: targetRow, 
-      col: 0 + iteration, 
-      status: "UNEXPLORED"
-    }))
-    dispatch(changeGridCellStatus({
-      gridIndex: 0,
-      row: targetRow,
-      col: grid[0].length - 1 - iteration,
-      status: "UNEXPLORED"
-    }))
-    //Apply next
-    dispatch(changeGridCellStatus({
-      gridIndex: 0,
-      row: targetRow, 
-      col: 0 + iteration + 1, 
-      status: "CURRENT"
-    }))
-    dispatch(changeGridCellStatus({
-      gridIndex: 0,
-      row: targetRow,
-      col: grid[0].length - 1 - (iteration + 1),
-      status: "CURRENT"
-    }))
-
-
+    const leftCell: [number, number] = [targetRow, 0 + iteration];
+    const rightCell: [number, number] = [targetRow, grid[0].length - 1 - iteration];
+    console.log(`Setting columns ${leftCell[1]} & ${rightCell[1]} to Unexplored`)
+    iterateToNextCell(dispatch, grid, leftCell);
+    iterateToPreviousCell(dispatch, grid, rightCell);
   }
 
   const clickStep = () => {
@@ -154,7 +130,6 @@ const TEMPLATE_SearchA2DMatrixIController = ({
     }
     applyNextPointers(targetRow, iteration);
     setIteration(iteration + 1);
-
   }
 
   useEffect(() => {

@@ -173,12 +173,14 @@ const TEMPLATE_FloodFillController = ({
           }
           play();
         }}
-        exInputs={{
-          labels: ["Replace: ", "With: "],
-          actions: [onChangeToReplace, onChangeReplaceWith]
-        }}
+
       />
     );     
 }
 export const FloodFillController = withBasicGridClient(TEMPLATE_FloodFillController)
+
+/*exInputs={{
+  labels: ["Replace: ", "With: "],
+  actions: [onChangeToReplace, onChangeReplaceWith]
+}} */
 

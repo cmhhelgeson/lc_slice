@@ -1,5 +1,5 @@
 import { Cell } from "../../../../utils/types";
-import { ARRAY_2D_GET_NEXT_INDEX } from "../../../../features/grids/gridUtils";
+import { ARRAY_2D_GET_NEXT_INDEX, ARRAY_2D_GET_PREVIOUS_INDEX } from "../../../../features/grids/gridUtils";
 import { pushJSXToLog } from "../../../../features/problemInfo/problemSlice";
 import { changeGridCellStatus } from "../../../../features/grids/gridsSlice";
 import { GridInterpreter } from "../../../../__generated__/resolvers-types";
@@ -49,6 +49,12 @@ export const iterateToNextCell = (
   grid: Cell[][],
   currentCell: [number, number]
 ): [number, number] => {
+  dispatch(changeGridCellStatus({
+    gridIndex: 0, 
+    row: currentCell[0],
+    col: currentCell[1],
+    status: "UNEXPLORED"
+  }))
   const nextCell = ARRAY_2D_GET_NEXT_INDEX(grid, currentCell[0], currentCell[1]);
   dispatch(changeGridCellStatus({
     gridIndex: 0,
@@ -57,6 +63,28 @@ export const iterateToNextCell = (
     status: "CURRENT"
   }));
   return nextCell;
+}
+
+export const iterateToPreviousCell = (
+  dispatch: any,
+  grid: Cell[][],
+  currentCell: [number, number]
+) => {
+  dispatch(changeGridCellStatus({
+    gridIndex: 0, 
+    row: currentCell[0],
+    col: currentCell[1],
+    status: "UNEXPLORED"
+  }))
+  const previousCell = ARRAY_2D_GET_PREVIOUS_INDEX(grid, currentCell[0], currentCell[1]);
+  dispatch(changeGridCellStatus({
+    gridIndex: 0,
+    row: previousCell[0],
+    col: previousCell[1],
+    status: "CURRENT"
+  }));
+  return previousCell;
+
 }
 
 export const parseCurrentCellFromString = (cellString: string): [number, number] => {
