@@ -1,0 +1,17 @@
+.pro-menu-item {
+  &:hover {
+    --gradient_width: 100%;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    background: linear-gradient(to right, #23a6d5 var(--light_blue_percent), #4fb8dd);
+    width: var(--gradient_width, 0%);
+    transition: width 800ms ease;
+    z-index: 0;
+  }
+}
