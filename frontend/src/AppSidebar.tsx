@@ -39,8 +39,7 @@ const Item = ({title, to, icon, selected, setSelected}: ItemProps) => {
       return;
     }
     const decimal = e.clientX / ref.current.offsetWidth;
-
-    const basePercent = 0, percentRange = 100;
+    const basePercent = -100, percentRange = 200;
     const adjustablePercent = percentRange * decimal;
     const lightBluePercent = basePercent + adjustablePercent;
     ref.current.style.setProperty("--light_blue_percent", `${lightBluePercent}%`)
@@ -75,7 +74,8 @@ const AppSidebar = ({isSidebar}: SidebarProps) => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>("Dashboard");
-  const sideBarRef = useRef<HTMLDivElement>(null)
+  const sideBarRef = useRef<HTMLDivElement>(null);
+  const emptyRef = useRef<SVGPathElement>(null);
   const timeline = useRef();
 
   useLayoutEffect(() => {
@@ -141,7 +141,8 @@ const AppSidebar = ({isSidebar}: SidebarProps) => {
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <OrangeSliceSVG opacity={1} size={120} rotate={0} position={"relative"} top={0}/>
-                <OrangeSliceSVG opacity={0} size={120} rotate={180} position={"absolute"} top={45} left={67}/>
+                <path id="empty" d="undefined" ref={emptyRef}></path>
+                <OrangeSliceSVG opacity={0} size={120} rotate={180} position={"absolute"} top={45} left={67} id={"orange_slice_morph"}/>
               </Box>
               <Box textAlign="center">
                 <Typography

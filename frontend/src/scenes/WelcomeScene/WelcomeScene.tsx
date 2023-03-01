@@ -1,11 +1,18 @@
 import { IconRotate } from "./IconRotate"
 import "./welcome_scene.scss"
+import { StandardDistributionGraph } from "../../components/StandardDistributionGraph"
 
 export const WeclomeScene = () => {
   return (
     <div id="welcome_scene_main_div">
       <h1>WIP Welcome Screen</h1>
       <h3>Select Grids from Sidebar</h3>
+      <StandardDistributionGraph 
+        mean={0}
+        standardDeviation={2}
+        fidelity={200}
+        xLabel="bones"
+      />
       <div id="dribble_container">
         <div id="tractor">
           <div className="wheels"/>
