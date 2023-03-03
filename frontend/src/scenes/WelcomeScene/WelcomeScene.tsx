@@ -10,10 +10,11 @@ export const WeclomeScene = () => {
       <StandardDistributionGraph 
         mean={0}
         standardDeviation={2}
+        spanInDeviations={10}
         fidelity={200}
         xLabel="bones"
       />
-      <div id="dribble_container">
+      {/*<div id="dribble_container">
         <div id="tractor">
           <div className="wheels"/>
           <div className="chassy"/>
@@ -41,7 +42,7 @@ export const WeclomeScene = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div>*/}
     </div>  
   )
 }

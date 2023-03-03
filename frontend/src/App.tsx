@@ -21,7 +21,7 @@ function App() {
           <AppSidebar isSidebar={isSidebar}/>
           <main className="content" style={{"overflowY": "auto"}}>
             <Routes>
-              <Route path="/problem_container" element={<AppMain />}></Route>
+              <Route path="/lc_slice/problem_container" element={<AppMain />}></Route>
               <Route path="/lc_slice" element={<WeclomeScene/>}></Route>
               <Route path="/lc_slice/grids" element={<GridsSelectorScene datatype='GRID'/>}/>
               <Route path="/lc_slice/graphs" element={<GraphsSelectorScene datatype='GRAPH'/>}/>

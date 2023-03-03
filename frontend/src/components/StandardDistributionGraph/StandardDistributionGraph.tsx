@@ -1,9 +1,13 @@
-import React, { useRef, useEffect, useMemo, useState} from "react";
+import React, { useRef, useEffect, useMemo, useState, useCallback} from "react";
 import * as d3 from "d3";
 import { curveMonotoneX } from "d3";
 import { extent } from "d3";
 import "./sdg.scss"
 
+
+
+let lastRun: number;
+let fps: number;
 
 
 export const useD3 = (renderChartFn: any, dependencies: any) => {
@@ -24,11 +28,20 @@ type SDGProps = {
   standardDeviation: number,
   fidelity: number,
   xLabel: string,
+  spanInDeviations: number
 }
 
 
 //https://www.probabilitycourse.com/chapter4/4_2_3_normal.php
 
+
+
+/* lowEnd: Beginning x-Value, which is an n standard deviations behind the center
+/* highEnd: Ending x-value, n standard deviations in front of center
+/* meanValue: mean of standard distribution curve
+/* standardDeviation: obvious
+/* fidelity: Number of step to take along the x-axis
+*/ 
 const generateProbabilityDensityData = (
   lowEnd: number,
   highEnd: number,
@@ -36,19 +49,20 @@ const generateProbabilityDensityData = (
   standardDeviation: number,
   fidelity: number,
 ): [number, number][] => {
+  // High end is four standard deviations away from mean
+  // low end is four standard deviations backwards
   const span = highEnd - lowEnd;
-  console.log(`span is ${span}`)
   const data: [number, number][] = [];
-  for (let i = 0; i < fidelity; i++) {
+  for (let i = 0; i <= fidelity; i++) {
     const xStep = lowEnd + (span * i/fidelity);
     // Espoused formula for PDF
-    //const eExponent = ((xStep - meanValue) ** 2) * -1;
-    //const numerator = (Math.E ** eExponent) / (2 * (standardDeviation **2));
-    //const denominator = standardDeviation * Math.sqrt(2 * Math.PI);
-    //const yStep = numerator/denominator;
-    // Espoused Formula for CDF
-    const eExponent = ((xStep ** 2) / 2) * - 1;
-    const yStep = (Math.E ** eExponent) / Math.sqrt(2 * Math.PI);
+    const variance = standardDeviation * standardDeviation;
+    const testVal = xStep - meanValue;
+    const exponentNumerator = testVal * testVal * -1;
+    const exponentDenominator = 2 * variance;
+    const exponent = exponentNumerator / exponentDenominator;
+    const expValue = Math.pow(Math.E, exponent);
+    const yStep = parseFloat((expValue / (Math.sqrt(2 * Math.PI) * standardDeviation)).toFixed(3));
     data.push([xStep, yStep]);
   }
   return data;
@@ -62,40 +76,94 @@ const getTicks = (count: number, max: number) => {
   });
 }
 
+const getTicksFromSpan = (
+  tickCount: number, 
+  low: number, 
+  high: number
+) => {
+  const arr = [];
+  for (let i = 0; i <= tickCount; i++) {
+    const val = low + (high - low) * (i/tickCount)
+    arr.push(parseFloat(val.toFixed(2)));
+  }
+  return arr;
+}
+
+
 export const StandardDistributionGraph = ({
   mean, 
   standardDeviation, 
   fidelity, 
-  xLabel
+  xLabel,
+  spanInDeviations
 }: SDGProps) => {
-  const cachedData: [number, number][] = useMemo(() => {
-    const low = mean - (4 * standardDeviation);
-    const high = mean + (4 * standardDeviation);
-    return generateProbabilityDensityData(low, high, mean, standardDeviation, fidelity);
-  }, [mean, standardDeviation]);
+  const low = mean - (spanInDeviations * standardDeviation);
+  const high = mean + (spanInDeviations * standardDeviation);
+  const cachedData: [number, number][] = generateProbabilityDensityData(low, high, mean, standardDeviation, fidelity);
 
-
-  const width = 500;
+  const width = 800;
   const height = 300;
+  const svgHeight = 300 + 20;
 
-  
-  const TICK_COUNT = 6;
+  /* Animation properties */
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const requestIdRef = useRef<number | null>(null);
+  const initialFidelityRef = useRef<number | null>(10);
+  const getCanvasWithContext = (canvas = canvasRef.current) => {
+    return {canvas, context: canvas?.getContext("2d")};
+  }
 
-  let MAX_X = cachedData[cachedData.length - 1][0];
+  const draw = () => {
+    const {canvas, context} = getCanvasWithContext();
+    if (!canvas || !context) {
+      return;
+    }
+    if (!initialFidelityRef.current || initialFidelityRef.current >= fidelity) {
+      return;
+    }
+    initialFidelityRef.current += 1;
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "gray";
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.strokeStyle = "red";
+    context.lineWidth = 3;
+    context.beginPath();
+    context.moveTo(cachedData[0][0], cachedData[0][1]);
+    for (let i = 1; i <= initialFidelityRef.current - 1; i++) {
+      const newIndex = Math.floor(fidelity / initialFidelityRef.current - 1) * i;
+      console.log(newIndex)
+      context.lineTo(cachedData[newIndex][0], cachedData[newIndex][1]);
+    }
+    context.stroke();
+    if (initialFidelityRef.current < fidelity) {
+      requestAnimationFrame(() => draw())
+    }
+  }
+
+
+  const TICK_COUNT = 10;
+
+  let MAX_X = Math.max(...cachedData.map(d => d[0]));
   let MAX_Y = Math.max(...cachedData.map(d => d[1]));
 
-  let getPixelX = (val: number) => val / MAX_X * width;
-  let getPixelY = (val: number) => val / MAX_Y * height;
+  let getPixelX = (val: number) => (val / MAX_X) * width;
+  let getPixelY = (val: number) => {
+    console.log((val / MAX_Y) * height);
+    return height - (val / MAX_Y) * height;
+  }
 
-  let x_ticks = getTicks(TICK_COUNT, MAX_X);
+  useEffect(() => {
+    requestAnimationFrame(() => draw())
+  }, [])
+
+  /*useEffect(() => {
+    requestAnimationFrame(() => draw())
+  }, [spanInDeviations, initialFidelityRef.current, fidelity,mean, standardDeviation]) */
+
+  let x_ticks = getTicksFromSpan(TICK_COUNT, low, high);
   let y_ticks = getTicks(TICK_COUNT, MAX_Y).reverse();
-
-  let d = `
-    M${getPixelX(cachedData[0][0])} ${getPixelY(cachedData[0][1])}
-    ${cachedData.slice(1).map(d => {
-      return `L${getPixelX(d[0])} ${getPixelY(d[1])}`
-    }).join(' ')}
-  `;
 
   return (
     <div className="line_chart" 
@@ -104,13 +172,11 @@ export const StandardDistributionGraph = ({
         height: `${height}px`
       }}
     >
-      <svg className="line_chart_svg" width={width} height={height}>
-        <path d={d} />
-      </svg>
-      <div className="x-axis">
+      <canvas ref={canvasRef} width={width} height={svgHeight}></canvas>
+      <div className="x_axis">
         {x_ticks.map(v => <div data-value={v}/>)}
       </div>
-      <div className="y-axis">
+      <div className="y_axis">
         {y_ticks.map(v => <div data-value={v}/>)}
       </div>
     </div>

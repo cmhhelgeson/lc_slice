@@ -76,7 +76,7 @@ const AppSidebar = ({isSidebar}: SidebarProps) => {
   const [selected, setSelected] = useState<string>("Dashboard");
   const sideBarRef = useRef<HTMLDivElement>(null);
   const emptyRef = useRef<SVGPathElement>(null);
-  const timeline = useRef();
+  const timeline = useRef<gsap.core.Timeline>();
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -166,35 +166,36 @@ const AppSidebar = ({isSidebar}: SidebarProps) => {
             >
               {isCollapsed ? "Structs" : "Data Structures"}
             </Typography>
-            <Item
-              title="Grids"
-              to="/lc_slice/grids"
-              icon={<AppsIcon fontSize="large"/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Linked Lists"
-              to="/lc_slice/linked_lists"
-              icon={<LinkIcon fontSize="large"/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Graphs"
-              to="/lc_slice/graphs"
-              icon={<ShareIcon fontSize="large"/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Hash Tables"
-              to="/lc_slice/hash_tables"
-              icon={<TocIcon fontSize="large"/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
+            <Box display={"grid"} className="sidebar_select_grid">
+              <Item
+                title="Grids"
+                to="/lc_slice/grids"
+                icon={<AppsIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Linked Lists"
+                to="/lc_slice/linked_lists"
+                icon={<LinkIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Graphs"
+                to="/lc_slice/graphs"
+                icon={<ShareIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Hash Tables"
+                to="/lc_slice/hash_tables"
+                icon={<TocIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </Box>
             <Typography
               variant="h6"
               color={colors.grey[900]}
@@ -202,35 +203,36 @@ const AppSidebar = ({isSidebar}: SidebarProps) => {
             >
               Pages
             </Typography>
-            <Item
-              title="FAQ Page"
-              to="/problem_container"
-              icon={<HelpOutlineOutlinedIcon fontSize="large"/>}
-              selected={selected}
-
-              setSelected={setSelected}
-            />
-            <Item
-              title="Github Page"
-              to="https://github.com/cmhhelgeson/lc_slice/tree/master/frontend"
-              icon={<GitHubIcon fontSize="large"/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Linkedin Page"
-              to="https://www.linkedin.com/in/christian-helgeson-02994b126/"
-              icon={<LinkedInIcon fontSize="large"/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              to="https://letterboxd.com/chrishelgie/"
-              title="Letterboxd Page"
-              icon={<MoreHorizIcon fontSize="large"/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <Box display={"grid"} className="sidebar_select_grid">
+              <Item
+                title="FAQ Page"
+                to="/problem_container"
+                icon={<HelpOutlineOutlinedIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Github Page"
+                to="https://github.com/cmhhelgeson/lc_slice/tree/master/frontend"
+                icon={<GitHubIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Linkedin Page"
+                to="https://www.linkedin.com/in/christian-helgeson-02994b126/"
+                icon={<LinkedInIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                to="https://letterboxd.com/chrishelgie/"
+                title="Letterboxd Page"
+                icon={<MoreHorizIcon fontSize="large"/>}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </Box>
           </Box>
         </Menu>
       </ProSidebar>

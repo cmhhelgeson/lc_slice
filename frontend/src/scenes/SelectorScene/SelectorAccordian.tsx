@@ -47,7 +47,7 @@ export const SelectorAccordian = ({
         </AccordionDetails>
         <Button variant="contained" onClick={() => {
           clearState(dispatch, problemNumber);
-          navigate("/problem_container");
+          navigate("/lc_slice/problem_container");
         }}>Select</Button>
       </Box>
     </Accordion>

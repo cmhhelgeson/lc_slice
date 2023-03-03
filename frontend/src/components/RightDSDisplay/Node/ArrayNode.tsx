@@ -1,6 +1,6 @@
 import React from "react";
 import { CellStatus } from "../../../utils/types";
-import "./node.css"
+import "./node.scss"
 
 
 type ArrayNodeProps = {

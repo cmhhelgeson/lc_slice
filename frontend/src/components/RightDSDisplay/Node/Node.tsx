@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import {changeGridCell} from "../../../features/grids/gridsSlice";
 import {CellStatus} from "../../../utils/types"
-import "./node.css"
+import "./node.scss"
 import {ForwardRefComponent, motion} from "framer-motion"
 import { useAppSelector } from "../../../features/hooks";
 import clsx from "clsx";

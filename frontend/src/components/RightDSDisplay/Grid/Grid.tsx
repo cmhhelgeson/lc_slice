@@ -1,7 +1,8 @@
-import React from "react"
+import React, { useLayoutEffect, useRef } from "react"
 import { useAppSelector } from "../../../features/hooks"
 import {Node} from "../Node"
 import "./grid.css"
+import gsap from "gsap"
 
 
 type GridProps = {
@@ -16,6 +17,17 @@ export const Grid = ({gridIndex}: GridProps) => {
     const cellWidth = useAppSelector(state => state.grids[gridIndex].cellStyleWidth);
     const cellHeight = useAppSelector(state => state.grids[gridIndex].cellStyleHeight);
     const isEditable = useAppSelector(state => state.grids[gridIndex].editable);
+
+    const gridRef = useRef<HTMLDivElement>(null);
+    const timeline = useRef<gsap.core.Timeline>();
+
+    useLayoutEffect(() => {
+      const ctx = gsap.context(() => {
+        timeline.current = gsap.timeline().from(gridRef.current, {translateX: -180})
+      }, [gridRef])
+
+      return () => ctx.revert();
+    }, []);
 
     return (
         <div className="grid">

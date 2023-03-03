@@ -6,24 +6,31 @@
 
 .line_chart_svg {
   fill: none;
-  stroke: #33C7FF;
+  stroke: red;
   display: block;
+  background-color: gray;
   stroke-width: 2px;
   border-left: 1px solid black;
   border-bottom: 2px solid black;
 }
 
-.x-axis {
+.x_axis {
   position: absolute;
-  bottom: 0px;
   height: 40px;
-  left: 40px;
-  right: 0;
+  flex-direction: row;
   display: flex;
+  width: inherit;
   justify-content: space-between;
+
+  & > div::after {
+    margin-top: 4px;
+    display: inline-block;
+    content: attr(data-value);
+    color: black;
+  }
 }
 
-.y-axis {
+.y_axis {
   position: absolute;
   top: 0;
   left: 0;
