@@ -17,6 +17,7 @@
       & > .sidebar_item:nth-of-type(#{$i}):hover ~ .sidebar_item:last-of-type:before {
         transform: translateY(-$y * 100%); //would be translate3d but that wasn't working
         opacity: 1;
+        width: 100%;
         background-color: rgba(200, 200, 250, 0.1);
       }
 
@@ -24,6 +25,7 @@
       & > .sidebar_item:last-of-type:hover:before {
         transform: translateY(0%);
         opacity: 1;
+        width: 100%;
         background-color: rgba(200, 200, 250, 0.1);
       }
     }
@@ -36,7 +38,7 @@
     &:last-of-type:before {
       content: "";
       position: absolute;
-      width: 100%;
+      width: 0%;
       height: 100%;
       top: 0;
       background-color: transparent;
